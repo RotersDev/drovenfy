@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  password       String
+  name           String    @default("")
+  avatar         String?
+  planType       String    @default("basic") @map("plan_type")
+  planInterval   String?   @map("plan_interval")
+  planExpiresAt  DateTime? @map("plan_expires_at")
+  planStartedAt  DateTime? @map("plan_started_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  menus Menu[]
+
+  @@map("users")
+}
+
+model Menu {
+  id               String   @id @default(uuid())
+  userId           String   @map("user_id")
+  name             String
+  slug             String   @unique
+  logo             String?
+  banner           String?
+  primaryColor     String   @default("#f97316") @map("primary_color")
+  whatsappNumber   String   @default("") @map("whatsapp_number")
+  whatsappMessage  String   @default("") @map("whatsapp_message")
+  deliveryFeeCity  Float?   @map("delivery_fee_city")
+  deliveryFeeSitio Float?   @map("delivery_fee_sitio")
+  description      String?
+  businessType     String?  @map("business_type")
+  address          String?
+  addressCep          String?   @map("address_cep")
+  addressStreet       String?   @map("address_street")
+  addressNumber       String?   @map("address_number")
+  addressComplement   String?   @map("address_complement")
+  addressNeighborhood String?   @map("address_neighborhood")
+  addressCity         String?   @map("address_city")
+  addressState        String?   @map("address_state")
+  latitude         Float?
+  longitude        Float?
+  deliveryTiers    Json?    @map("delivery_tiers")
+  instagram        String?
+  phone            String?
+  estimatedDelivery String? @map("estimated_delivery")
+  minimumOrder     Float?   @map("minimum_order")
+  paymentMethods   String[] @map("payment_methods")
+  acceptsPickup    Boolean  @default(false) @map("accepts_pickup")
+  isActive         Boolean  @default(true) @map("is_active")
+  businessHours    Json?    @map("business_hours")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime? @map("updated_at")
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categories Category[]
+
+  @@map("menus")
+}
+
+model Category {
+  id        String @id @default(uuid())
+  menuId    String @map("menu_id")
+  name      String
+  image     String?
+  sortOrder Int    @default(0) @map("sort_order")
+
+  menu     Menu      @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          String  @id @default(uuid())
+  categoryId  String  @map("category_id")
+  name        String
+  description String  @default("")
+  price       Float   @default(0)
+  image       String?
+  highlight   Boolean @default(false)
+  sortOrder   Int     @default(0) @map("sort_order")
+
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@map("products")
+}
