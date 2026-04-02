@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "tsx backend/src/server.ts",
     "dev:api": "tsx backend/src/dev-api.ts",
-    "build": "vite build --config frontend/vite.config.ts",
-    "preview": "vite preview --config frontend/vite.config.ts",
+    "build": "cd frontend && vite build",
+    "preview": "cd frontend && vite preview",
     "lint:frontend": "tsc --project frontend/tsconfig.json --noEmit",
     "lint:backend": "tsc --project backend/tsconfig.json --noEmit",
     "lint": "npm run lint:frontend && npm run lint:backend"
